@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface
 {
-    const MAX_ADVICED_DAILY_CALORIES = 2500;
+    const MAX_ADVISED_DAILY_CALORIES = 2500;
 
     /**
      * @ORM\Column(type="integer")
