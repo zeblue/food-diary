@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="columns">
+  <div class="column is-one-third">
+    <form method="post" class="box">
+      <div class="field">
+        <label class="label" for="operation">Opération</label>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select name="operation" id="operation" onchange="this.form.submit()">
+              {% for key, operation in operations.items() %}
+                <option value="{{ key }}" {% if operation.name == selected_operation.name %}selected{% endif %}>{{ operation.label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <p class="help">{{ selected_operation.description }}</p>
+      </div>
+
+      {% for parameter in selected_operation.parameters %}
+        <div class="field">
+          <label class="label" for="{{ parameter }}">{{ parameter | replace('_', ' ') | title }}</label>
+          <div class="control">
+            <input class="input" type="text" name="{{ parameter }}" id="{{ parameter }}" value="{{ request.form.get(parameter, '') }}" required>
+          </div>
+        </div>
+      {% endfor %}
+
+      <div class="field is-grouped is-grouped-right">
+        <div class="control">
+          <button class="button is-primary" type="submit">Exécuter</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="column">
+    <div class="box">
+      <h2 class="title is-4">Prévisualisation de la requête</h2>
+      <pre><code>{{ preview_sql }}</code></pre>
+    </div>
+
+    {% if result %}
+      <div class="box">
+        <h2 class="title is-4">Résultat</h2>
+        {% if result.columns %}
+          <table class="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                {% for column in result.columns %}
+                  <th>{{ column }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in result.rows %}
+                <tr>
+                  {% for cell in row %}
+                    <td>{{ cell }}</td>
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p>Aucune donnée à afficher. La requête a été exécutée sans résultat.</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
